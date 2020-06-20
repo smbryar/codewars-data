@@ -1,0 +1,33 @@
+service: codewars-data
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-2
+
+functions:
+  updateDatabase:
+    handler: handler.updateDatabase
+    environment:
+      DB_HOST: ${opt:DB_HOST}
+      DB_USER: ${opt:DB_USER}
+      DB_PASSWORD: ${opt:DB_PASSWORD}
+    events:
+      - schedule: 
+          rate: cron(0 59 23 ? * SUN *)
+          enabled: true
+  honorDatabase:
+    handler: handler.honorDatabase
+    environment:
+      DB_HOST: ${opt:DB_HOST}
+      DB_USER: ${opt:DB_USER}
+      DB_PASSWORD: ${opt:DB_PASSWORD}
+    events:
+      - http: 
+          path: honorDatabase
+          method: get
+          cors: true
+      - http: 
+          path: honorDatabase/{id}
+          method: delete
+          cors: true
